@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../viewmodel/viewModel.dart';
-import '../widgets/speedometer.dart';
+import '../viewmodel/speedmeter_viewmodel.dart';
 
 class SpeedometerScreen extends StatelessWidget {
   const SpeedometerScreen({super.key});
@@ -15,6 +13,7 @@ class SpeedometerScreen extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
+          // Background gradient
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -31,9 +30,9 @@ class SpeedometerScreen extends StatelessWidget {
                     ? Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text(
-                            'Failed to access location services.',
-                            style: TextStyle(
+                          Text(
+                            viewModel.errorMessage,
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -42,17 +41,23 @@ class SpeedometerScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 16),
                           ElevatedButton(
-                            onPressed: () => viewModel.retryInitialization(),
+                            onPressed: viewModel.retryInitialization,
                             child: const Text('Retry'),
                           ),
                         ],
                       )
-                    : StreamBuilder(
+                    : StreamBuilder<double>(
                         stream: viewModel.speedStream,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            return RadialSpeedometer(
-                                speedModel: snapshot.data!);
+                            return Text(
+                              '${snapshot.data!.toStringAsFixed(2)} km/h',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 48,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
                           }
                           return const CircularProgressIndicator();
                         },

@@ -1,40 +1,45 @@
 import 'package:flutter/material.dart';
-
-import '../models/speed_model.dart';
 import '../services/lcoation_service.dart';
+
 
 enum SpeedometerState { loading, error, ready }
 
 class SpeedometerViewModel extends ChangeNotifier {
   final LocationService _locationService;
-  Stream<SpeedModel>? _speedStream;
   SpeedometerState _state = SpeedometerState.loading;
+  String _errorMessage = "";
+
+  Stream<double>? _speedStream;
 
   SpeedometerViewModel(this._locationService) {
-    _initializeLocation();
+    _initialize();
   }
 
   SpeedometerState get state => _state;
-  Stream<SpeedModel>? get speedStream => _speedStream;
+  String get errorMessage => _errorMessage;
+  Stream<double>? get speedStream => _speedStream;
 
-  Future<void> _initializeLocation() async {
+  Future<void> _initialize() async {
     try {
       bool isServiceEnabled = await _locationService.initialize();
       if (isServiceEnabled) {
-        _speedStream = _locationService.getSpeedStream();
+        _speedStream = _locationService.speedStream;
         _state = SpeedometerState.ready;
       } else {
         _state = SpeedometerState.error;
+        _errorMessage = "Please enable location services.";
       }
     } catch (e) {
       _state = SpeedometerState.error;
+      _errorMessage = "An error occurred: ${e.toString()}";
     }
     notifyListeners();
   }
 
-  Future<void> retryInitialization() async {
+  void retryInitialization() async {
     _state = SpeedometerState.loading;
+    _errorMessage = "";
     notifyListeners();
-    await _initializeLocation();
+    await _initialize();
   }
 }
