@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../models/speed_model.dart';
 import '../viewmodel/speedmeter_viewmodel.dart';
+import '../widgets/speedometer.dart';
 
 class SpeedometerScreen extends StatelessWidget {
   const SpeedometerScreen({super.key});
@@ -50,13 +52,8 @@ class SpeedometerScreen extends StatelessWidget {
                         stream: viewModel.speedStream,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            return Text(
-                              '${snapshot.data!.toStringAsFixed(2)} km/h',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 48,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            return RadialSpeedometer(
+                              speedModel: SpeedModel(speed: snapshot.data!),
                             );
                           }
                           return const CircularProgressIndicator();

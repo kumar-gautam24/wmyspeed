@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/lcoation_service.dart';
 
-
 enum SpeedometerState { loading, error, ready }
 
 class SpeedometerViewModel extends ChangeNotifier {
@@ -18,6 +17,18 @@ class SpeedometerViewModel extends ChangeNotifier {
   SpeedometerState get state => _state;
   String get errorMessage => _errorMessage;
   Stream<double>? get speedStream => _speedStream;
+  bool isKmH = true;
+
+  String get unitLabel => isKmH ? 'km/h' : 'mph';
+
+  double convertSpeed(double speedInKmH) {
+    return isKmH ? speedInKmH : speedInKmH / 1.609; // Convert to mph
+  }
+
+  void toggleUnit() {
+    isKmH = !isKmH;
+    notifyListeners();
+  }
 
   Future<void> _initialize() async {
     try {

@@ -25,15 +25,13 @@ class LocationService {
     return true;
   }
 
- void _startListeningToLocation() {
+  void _startListeningToLocation() {
     Geolocator.getPositionStream(
       locationSettings: LocationSettings(
         accuracy: LocationAccuracy.high,
         distanceFilter: 0, // Updates for every small movement
       ),
     ).listen((Position position) {
-      print("Accuracy: ${position.accuracy} meters");
-
       if (position.speed >= 0) {
         double rawSpeed = position.speed * 3.6; // Convert m/s to km/h
         double smoothedSpeed = _kalmanFilter.filter(rawSpeed);
@@ -52,7 +50,6 @@ class LocationService {
     _speedController.close();
   }
 }
-
 
 class KalmanFilter {
   final double _q = 0.1; // Process noise covariance
