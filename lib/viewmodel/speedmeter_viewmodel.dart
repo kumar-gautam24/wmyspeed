@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../services/lcoation_service.dart';
+
+import '../services/location_service.dart';
 
 enum SpeedometerState { loading, error, ready }
 
@@ -7,18 +8,16 @@ class SpeedometerViewModel extends ChangeNotifier {
   final LocationService _locationService;
   SpeedometerState _state = SpeedometerState.loading;
   String _errorMessage = "";
-
+  bool isKmH = true;
   Stream<double>? _speedStream;
 
   SpeedometerViewModel(this._locationService) {
     _initialize();
   }
-
+  // getters
   SpeedometerState get state => _state;
   String get errorMessage => _errorMessage;
   Stream<double>? get speedStream => _speedStream;
-  bool isKmH = true;
-
   String get unitLabel => isKmH ? 'km/h' : 'mph';
 
   double convertSpeed(double speedInKmH) {
